@@ -1,0 +1,45 @@
+// Online C# Editor for free
+// Write, Edit and Run your C# code using C# Online Compiler
+
+using System;
+using System.Threading;
+
+public class ProcessA{
+    public void Run(){
+        lock(Deadlock.x){
+            Console.WriteLine("Process A locked x");
+            Thread.Sleep(100);
+            Console.WriteLine("Process A waiting for y");
+            lock(Deadlock.y){
+               Console.WriteLine("Process A completed"); 
+            }
+        }
+    }
+}
+public class ProcessB{
+    public void Run(){
+        lock(Deadlock.y){
+            Console.WriteLine("Process B locked y");
+            Thread.Sleep(100);
+            Console.WriteLine("Process B waiting for x");
+            lock(Deadlock.x){
+               Console.WriteLine("Process B completed"); 
+            }
+        }
+    }
+}
+public class Deadlock
+{
+    public static object x = new object();
+    public static object y = new object();
+    public static void Main(string[] args)
+    {
+        ProcessA pA = new ProcessA();
+        ProcessB pB = new ProcessB();
+        Thread t1 = new Thread(pA.Run);
+        Thread t2 = new Thread(pB.Run);
+        t1.Start();
+        t2.Start();
+        Console.WriteLine("Main completed");
+    }
+}
